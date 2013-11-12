@@ -1,0 +1,10 @@
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\FaceSDK\samples\LiveFacialFeatures\C#\bin\Debug\LiveFacialFeatures_VS2008.exe.config
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\FaceSDK\samples\LiveFacialFeatures\C#\bin\Debug\LiveFacialFeatures_VS2008.exe
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\FaceSDK\samples\LiveFacialFeatures\C#\bin\Debug\LiveFacialFeatures_VS2008.pdb
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\FaceSDK\samples\LiveFacialFeatures\C#\bin\Debug\FaceSDK.NET.dll
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\FaceSDK\samples\LiveFacialFeatures\C#\obj\Debug\LiveFacialFeatures_VS2008.csprojResolveAssemblyReference.cache
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\FaceSDK\samples\LiveFacialFeatures\C#\obj\Debug\LiveRecognition.Form1.resources
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\FaceSDK\samples\LiveFacialFeatures\C#\obj\Debug\LiveFacialFeatures_VS2008.Properties.Resources.resources
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\FaceSDK\samples\LiveFacialFeatures\C#\obj\Debug\LiveFacialFeatures_VS2008.csproj.GenerateResource.Cache
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\FaceSDK\samples\LiveFacialFeatures\C#\obj\Debug\LiveFacialFeatures_VS2008.exe
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\FaceSDK\samples\LiveFacialFeatures\C#\obj\Debug\LiveFacialFeatures_VS2008.pdb
