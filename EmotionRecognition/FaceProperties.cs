@@ -1,4 +1,6 @@
-﻿using Luxand;
+﻿using System;
+using System.Runtime.Serialization;
+using Luxand;
 
 namespace LiveFacialFeatures_VS2008.EmotionRecognition
 {
@@ -8,9 +10,13 @@ namespace LiveFacialFeatures_VS2008.EmotionRecognition
         public FSDK.TPoint[] SDKFacePoints { get; set; }
     }
 
-    public class FaceAnalysis
+    [Serializable]
+    public class FaceAnalysis 
     {
         public FacePoints FacePoints { get; set; }
+        public double FaceRectangleArea { get; set; }
+
+        
     }
 
     public class FaceRectangle

@@ -68,8 +68,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CopyObject.cs" />
     <Compile Include="EmotionRecognition\EvaluateFace.cs" />
     <Compile Include="EmotionRecognition\FaceGestureRecognition.cs" />
+    <Compile Include="EmotionRecognition\FaceGestureRecognitionAnalysis.cs" />
     <Compile Include="EmotionRecognition\FaceProperties.cs" />
     <Compile Include="EmotionRecognition\FacePoints.cs" />
     <Compile Include="Form1.cs">

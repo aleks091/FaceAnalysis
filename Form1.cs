@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using LiveFacialFeatures_VS2008;
 using LiveFacialFeatures_VS2008.EmotionRecognition;
 using Luxand;
 
@@ -20,6 +18,11 @@ namespace LiveRecognition
         private int tracker = 0;
         private int cameraHandle = 0;
         private FaceAnalysis _faceAnalysis;
+        private List<FaceAnalysis> _faceAnalysisCalibradas;
+        private FaceGestureRecognitionAnalysis _gestureRecognitionAnalysis;
+        private bool _estaCalibrado;
+        private bool _verPuntosDeReferencia;
+
         // WinAPI procedure to release HBITMAP handles returned by FSDKCam.GrabFrame
         [DllImport("gdi32.dll")]
         static extern bool DeleteObject(IntPtr hObject);
@@ -27,6 +30,10 @@ namespace LiveRecognition
         public Form1()
         {
             InitializeComponent();
+            _faceAnalysisCalibradas = new List<FaceAnalysis>();
+            _gestureRecognitionAnalysis = new FaceGestureRecognitionAnalysis();
+            _estaCalibrado = false;
+            _verPuntosDeReferencia = false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -82,7 +89,7 @@ namespace LiveRecognition
 
             int err = 0; // set realtime face detection parameters
             FSDK.SetTrackerMultipleParameters(tracker, "RecognizeFaces=false; DetectFacialFeatures=true; HandleArbitraryRotations=false; DetermineFaceRotationAngle=false; InternalResizeWidth=100; FaceDetectionThreshold=5;", ref err);
-            
+            var programFirstStarted = true;
             while (!needClose) 
             {
                 Int32 imageHandle = 0;
@@ -113,39 +120,48 @@ namespace LiveRecognition
                     int top = facePosition.yc - (int)(facePosition.w * 0.5);
 
                     var faceProperties = new FaceProperties
-                                             {
-                                                 FaceRectangle = new FaceRectangle
-                                                                     {
-                                                                         X = left,
-                                                                         Y = top,
-                                                                         Width = (int)(facePosition.w * 1.2),
-                                                                         Height = (int)(facePosition.w * 1.2)
-                                                                     },
-                                                 SDKFacePoints = facialFeatures
-                                             };
+                    {
+                        FaceRectangle = new FaceRectangle
+                        {
+                            X = left,
+                            Y = top,
+                            Width = (int)(facePosition.w * 1.2),
+                            Height = (int)(facePosition.w * 1.2)
+                        },
+                        SDKFacePoints = facialFeatures
+                    };
 
                     var evaluateFace = new EvaluateFace(faceProperties);
                     _faceAnalysis = evaluateFace.Evaluate();
 
-                    
-
-                    gr.DrawRectangle(Pens.LightGreen, 
-                        faceProperties.FaceRectangle.X, 
-                        faceProperties.FaceRectangle.Y, 
-                        faceProperties.FaceRectangle.Width, 
-                        faceProperties.FaceRectangle.Height);
-
-                    int number;
-                    var txtNumber = Int32.TryParse(textBox1.Text, out number) ? number : 1;
-                    var pointNumber = txtNumber - 1;
-                    for (int index = 0; index < facialFeatures.Length; index++)
+                    if (_estaCalibrado)
                     {
-                        FSDK.TPoint point = facialFeatures[index];
-                        if (pointNumber == index)
-                            gr.FillEllipse(Brushes.Green, point.x, point.y, 5, 5);
-                        else
-                            gr.FillEllipse(Brushes.DarkBlue, point.x, point.y, 5, 5);
+                        lblStatus.Text = "Status: Analizando";
+                        //Aqui se muestra el resultado de las expresiones faciales en la
+                        //interfaz de usuario
+                        AnalisarCara();
+                        lblPerCara.Invoke(new SetLabeltext(VerAreaCara), _faceAnalysis.FaceRectangleArea.ToString());
+                    }
 
+                    if (programFirstStarted)
+                        Task.Run(() => CalibrarCara());
+
+                    if (_verPuntosDeReferencia)
+                    {
+                        gr.DrawRectangle(Pens.LightGreen, 
+                                         faceProperties.FaceRectangle.X, 
+                                         faceProperties.FaceRectangle.Y, 
+                                         faceProperties.FaceRectangle.Width, 
+                                         faceProperties.FaceRectangle.Height);
+
+                        
+                        for (var index = 0; index < facialFeatures.Length; index++)
+                        {
+                            FSDK.TPoint point = facialFeatures[index];
+                            
+                                gr.FillEllipse(Brushes.DarkBlue, point.x, point.y, 5, 5);
+
+                        }
                     }
                 }
 
@@ -156,8 +172,34 @@ namespace LiveRecognition
 
                 // make UI controls accessible
                 Application.DoEvents();
+
+                programFirstStarted = false;
             }
                      
+        }
+
+        private void AnalisarCara()
+        {
+            AnalisarSonriza();
+            AnalisarSorpresa();
+        }
+
+        private void AnalisarSonriza()
+        {
+            var isSmiling = _gestureRecognitionAnalysis.IsSmiling(_faceAnalysisCalibradas, _faceAnalysis);
+            if (isSmiling)
+                lblSonriza.Text = "Sonriza: Si";
+            else
+                lblSonriza.Text = "Sonriza: No";
+        }
+
+        private void AnalisarSorpresa()
+        {
+            var isSurprized = _gestureRecognitionAnalysis.IsSurprized(_faceAnalysisCalibradas, _faceAnalysis);
+            if (isSurprized)
+                lblSorpresa.Text = "Sorpresa: Si";
+            else
+                lblSorpresa.Text = "Sorpresa: No";
         }
 
         private void PrintFaceAnalysisResult(FaceAnalysis faceAnalysis)
@@ -246,6 +288,28 @@ namespace LiveRecognition
 
         private delegate void DistanceTextDelagate(double distance);
 
+        private delegate void SetLabeltext(string text);
+
+        private delegate void SetFaceInfo(FaceAnalysis faceAnalysis);
+
+        private void VerCalibracionInfo(FaceAnalysis faceAnalysis)
+        {
+            var minInterval = faceAnalysis.FaceRectangleArea - 3000;
+            var maxInterval = faceAnalysis.FaceRectangleArea + 3000;
+            txtCalibrada.Text += string.Format("Calibrado a: {0} - {1}\r\n", 
+                minInterval, maxInterval);
+        }
+
+        private void VerAreaCara(string text)
+        {
+            lblPerCara.Text = string.Format("Perimetro de Cara: {0}", text);
+        }
+
+        private void VerStatusDeApplicacion(string text)
+        {
+            lblStatus.Text = "Status: Calibrando";
+        }
+
         private void PrintDistance(double distance)
         {
             txtEstadisticas.Text += string.Format("Distancia entre 8 y 12: {0}\r\n", distance);
@@ -270,6 +334,25 @@ namespace LiveRecognition
         private void btnFaceAnalysis_Click(object sender, EventArgs e)
         {
             Task.Run(() => PrintFaceAnalysisResult(_faceAnalysis));
+        }
+
+        private void CalibrarCara()
+        {
+            while(_faceAnalysisCalibradas.Count < 20)
+            {
+                Thread.Sleep(500);
+                var copiedAnalysis = ObjectCopier.Clone(_faceAnalysis);
+                _faceAnalysisCalibradas.Add(copiedAnalysis);
+                lblStatus.Invoke(new SetLabeltext(VerStatusDeApplicacion), "Status: Calibrando");
+                txtCalibrada.Invoke(new SetFaceInfo(VerCalibracionInfo), copiedAnalysis);
+            }
+            
+            _estaCalibrado = true;
+        }
+
+        private void cbVerRefs_CheckedChanged(object sender, EventArgs e)
+        {
+            _verPuntosDeReferencia = cbVerRefs.Checked;
         }
     }
 }

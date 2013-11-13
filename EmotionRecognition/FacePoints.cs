@@ -1,8 +1,10 @@
 ﻿
+using System;
 using Luxand;
 
 namespace LiveFacialFeatures_VS2008.EmotionRecognition
 {
+    [Serializable]
     public class FacePoints
     {
         public Shin ShinPoints { get; set; }
@@ -13,7 +15,7 @@ namespace LiveFacialFeatures_VS2008.EmotionRecognition
         public RightEyeBrow RightEyeBrowPoints { get; set; }
         public LeftEyeBrow LeftEyeBrowPoints { get; set; }
     }
-
+    [Serializable]
     public class Shin
     {
         public FacePoint Point1 { get; set; }
@@ -24,7 +26,7 @@ namespace LiveFacialFeatures_VS2008.EmotionRecognition
         public FacePoint Point6 { get; set; }
         public FacePoint Point7 { get; set; }
     }
-
+    [Serializable]
     public class Mouth
     {
         public FacePoint Point8 { get; set; }
@@ -39,7 +41,7 @@ namespace LiveFacialFeatures_VS2008.EmotionRecognition
         public FacePoint Point17 { get; set; }
         public FacePoint Point18 { get; set; }
     }
-
+    [Serializable]
     public class Nose
     {
         public FacePoint Point19 { get; set; }
@@ -56,7 +58,7 @@ namespace LiveFacialFeatures_VS2008.EmotionRecognition
         public FacePoint Point30 { get; set; }
         public FacePoint Point41 { get; set; }
     }
-
+    [Serializable]
     public class RightEye
     {
         public FacePoint Point42 { get; set; }
@@ -71,7 +73,7 @@ namespace LiveFacialFeatures_VS2008.EmotionRecognition
         public FacePoint Point51 { get; set; }
         public FacePoint Point52 { get; set; }
     }
-
+    [Serializable]
     public class LeftEye
     {
         public FacePoint Point53 { get; set; }
@@ -86,7 +88,7 @@ namespace LiveFacialFeatures_VS2008.EmotionRecognition
         public FacePoint Point62 { get; set; }
         public FacePoint Point63 { get; set; }
     }
-
+    [Serializable]
     public class RightEyeBrow
     {
         public FacePoint Point40 { get; set; }
@@ -95,7 +97,7 @@ namespace LiveFacialFeatures_VS2008.EmotionRecognition
         public FacePoint Point37 { get; set; }
         public FacePoint Point36 { get; set; }
     }
-
+    [Serializable]
     public class LeftEyeBrow
     {
         public FacePoint Point31 { get; set; }
@@ -104,7 +106,7 @@ namespace LiveFacialFeatures_VS2008.EmotionRecognition
         public FacePoint Point34 { get; set; }
         public FacePoint Point35 { get; set; }
     }
-
+    [Serializable]
     public class FacePoint
     {
         public int PointId { get; set; }

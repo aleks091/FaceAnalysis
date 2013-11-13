@@ -6,18 +6,37 @@ using System.Threading.Tasks;
 
 namespace LiveFacialFeatures_VS2008.EmotionRecognition
 {
-    public class FaceGestureRecognition
+    //Todo: Use this class
+    internal class FaceGestureRecognition
     {
-        public bool IsSmiling(Mouth normalMouth, Mouth smilingMouth)
+        public bool IsSmiling(FaceAnalysis normalFace, FaceAnalysis smilingFace)
         {
             var normalDistance =
-                DistanceBetweenPoints(normalMouth.Point8, normalMouth.Point12);
+                DistanceBetweenPoints(normalFace.FacePoints.MouthPoints.Point8, normalFace.FacePoints.MouthPoints.Point12);
 
-            var smilingDistance = 
-                DistanceBetweenPoints(smilingMouth.Point8, smilingMouth.Point12);
+            var smilingDistance =
+                DistanceBetweenPoints(smilingFace.FacePoints.MouthPoints.Point8, smilingFace.FacePoints.MouthPoints.Point12);
 
             var isSmiling = isMoreThanPercent(normalDistance, smilingDistance, 15);
             return isSmiling;
+        }
+
+        internal bool IsSurprized(FaceAnalysis normalFace, FaceAnalysis surprizeFace)
+        {
+            var normalDistance =
+                DistanceBetweenPoints(normalFace.FacePoints.MouthPoints.Point10, normalFace.FacePoints.MouthPoints.Point14);
+
+            var surprizeDistance =
+                DistanceBetweenPoints(surprizeFace.FacePoints.MouthPoints.Point10, surprizeFace.FacePoints.MouthPoints.Point14);
+
+            var isSurprized = isMoreThanPercent(normalDistance, surprizeDistance, 15);
+            return isSurprized;
+        }
+
+        internal bool IsUpset()
+        {
+            //Todo: make method
+            return false;
         }
 
         private double DistanceBetweenPoints(FacePoint point1, FacePoint point2)

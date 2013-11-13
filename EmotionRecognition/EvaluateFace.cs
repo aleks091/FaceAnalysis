@@ -20,6 +20,9 @@ namespace LiveFacialFeatures_VS2008.EmotionRecognition
         {
             _faceAnalysis.FacePoints = new FacePoints();
 
+            _faceAnalysis.FaceRectangleArea =
+                _faceProperties.FaceRectangle.Height*_faceProperties.FaceRectangle.Width;
+
             EvaluateShin();
             EvaluateNose();
             EvaluateMouth();
